@@ -89,13 +89,6 @@ export abstract class DirectoryLoader {
 			const currentVersionNode = tempNode.nodeVersions[tempNode.currentVersion];
 			this.addCodex({ node: currentVersionNode, filePath, isCustom: packageName === 'CUSTOM' });
 			nodeVersion = tempNode.currentVersion;
-
-			if (currentVersionNode.hasOwnProperty('executeSingle')) {
-				Logger.warn(
-					`"executeSingle" will get deprecated soon. Please update the code of node "${packageName}.${nodeName}" to use "execute" instead!`,
-					{ filePath },
-				);
-			}
 		} else {
 			// Short renaming to avoid type issues
 			const tmpNode = tempNode;
