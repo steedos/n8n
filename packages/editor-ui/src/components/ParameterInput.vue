@@ -47,7 +47,7 @@
 			/>
 			<div
 				v-else-if="
-					['json', 'string'].includes(parameter.type) ||
+					['json', 'string', 'sql'].includes(parameter.type) ||
 					remoteParameterOptionsLoadingIssues !== null
 				"
 			>
@@ -85,7 +85,7 @@
 				></text-edit>
 
 				<code-node-editor
-					v-if="getArgument('editor') === 'codeNodeEditor' && isCodeNode(node)"
+					v-if="getArgument('editor') === 'codeNodeEditor'"
 					:mode="node.parameters.mode"
 					:value="value"
 					:defaultValue="parameter.default"
@@ -977,9 +977,6 @@ export default mixins(
 			});
 
 			this.$emit('focus');
-		},
-		isCodeNode(node: INodeUi): boolean {
-			return node.type === CODE_NODE_TYPE;
 		},
 		isHtmlNode(node: INodeUi): boolean {
 			return node.type === HTML_NODE_TYPE;

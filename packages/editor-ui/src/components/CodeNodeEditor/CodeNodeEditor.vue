@@ -27,6 +27,7 @@ import { Compartment, EditorState, Extension } from '@codemirror/state';
 import { EditorView, ViewUpdate } from '@codemirror/view';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
+import { sql } from '@codemirror/lang-sql';
 
 import { readOnlyEditorExtensions, writableEditorExtensions } from './baseExtensions';
 import { linterExtension } from './linter';
@@ -40,7 +41,7 @@ import { useRootStore } from '@/stores/n8nRootStore';
 import Modal from '../Modal.vue';
 import { useSettingsStore } from '@/stores/settings';
 
-const languages = ['javaScript', 'json'] as const;
+const languages = ['javaScript', 'json', 'sql'] as const;
 type Language = (typeof languages)[number];
 
 const modes = ['runOnceForAllItems', 'runOnceForEachItem'] as const;
@@ -177,6 +178,7 @@ export default mixins(linterExtension, completerExtension, workflowHelpers).exte
 					insertedText = full.slice(lastDotIndex + 1);
 				}
 
+				// TODO: Still has to get updated for JSON and SQL
 				this.$telemetry.track('User autocompleted code', {
 					instance_id: this.rootStore.instanceId,
 					node_type: CODE_NODE_TYPE,
@@ -235,6 +237,9 @@ export default mixins(linterExtension, completerExtension, workflowHelpers).exte
 				break;
 			case 'javaScript':
 				extensions.push(javascript(), this.autocompletionExtension());
+				break;
+			case 'sql':
+				extensions.push(sql());
 				break;
 		}
 
