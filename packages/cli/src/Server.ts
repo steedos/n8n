@@ -143,6 +143,7 @@ import { SamlController } from './sso/saml/routes/saml.controller.ee';
 import { SamlService } from './sso/saml/saml.service.ee';
 import { LdapManager } from './Ldap/LdapManager.ee';
 import { getCurrentAuthenticationMethod } from './sso/ssoHelpers';
+import { CredentialsHelper } from './CredentialsHelper';
 
 const exec = promisify(callbackExec);
 
@@ -354,7 +355,7 @@ class Server extends AbstractServer {
 		return this.frontendSettings;
 	}
 
-	private registerControllers(ignoredEndpoints: Readonly<string[]>) {
+	private async registerControllers(ignoredEndpoints: Readonly<string[]>) {
 		const { app, externalHooks, activeWorkflowRunner, nodeTypes } = this;
 		const repositories = Db.collections;
 		setupAuthMiddlewares(app, ignoredEndpoints, this.restEndpoint, repositories.User);
@@ -365,13 +366,30 @@ class Server extends AbstractServer {
 		const postHog = this.postHog;
 		const samlService = Container.get(SamlService);
 
+		const encryptionKey = await UserSettings.getEncryptionKey();
+		const credentialsHelper = new CredentialsHelper(encryptionKey);
+
 		const controllers: object[] = [
 			new EventBusController(),
 			new AuthController({ config, internalHooks, repositories, logger, postHog }),
 			new OwnerController({ config, internalHooks, repositories, logger }),
 			new MeController({ externalHooks, internalHooks, repositories, logger }),
-			new OAuth1CredentialController(config, logger, externalHooks, repositories.Credentials),
-			new OAuth2CredentialController(config, logger, externalHooks, repositories.Credentials),
+			new OAuth1CredentialController(
+				config,
+				logger,
+				credentialsHelper,
+				externalHooks,
+				repositories.Credentials,
+				repositories.SharedCredentials,
+			),
+			new OAuth2CredentialController(
+				config,
+				logger,
+				credentialsHelper,
+				externalHooks,
+				repositories.Credentials,
+				repositories.SharedCredentials,
+			),
 			new NodeTypesController({ config, nodeTypes }),
 			new PasswordResetController({
 				config,
@@ -493,7 +511,7 @@ class Server extends AbstractServer {
 
 		await handleLdapInit();
 
-		this.registerControllers(ignoredEndpoints);
+		await this.registerControllers(ignoredEndpoints);
 
 		this.app.use(`/${this.restEndpoint}/credentials`, credentialsController);
 
