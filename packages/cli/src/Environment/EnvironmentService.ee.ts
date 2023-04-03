@@ -37,7 +37,8 @@ import { SharedCredentials } from '@db/entities/SharedCredentials';
 import { CredentialsEntity } from '@db/entities/CredentialsEntity';
 import type { User } from '@sentry/node';
 import type { EntityManager } from 'typeorm';
-import type { ICredentialsBase, ICredentialsDb } from '@/Interfaces';
+import type { ICredentialsDecryptedDb, ICredentialsDb } from '@/Interfaces';
+// @ts-ignore
 import { providers } from 'gitops-secrets';
 
 // TODOs:
@@ -227,7 +228,7 @@ export class EnvironmentService {
 			const { name, type, nodesAccess, data, id } = credential;
 			const credentialObject = new Credentials({ id, name }, type, nodesAccess, data);
 			const plainData = credentialObject.getData(encryptionKey);
-			(credential as ICredentialsDecryptedDb).data = this.replaceData(plainData);
+			(credential as ICredentialsDecryptedDb).data = this.replaceCredentialData(plainData);
 
 			await fsWriteFile(
 				path.join(this.gitFolder, '/credentials', `${credential.id}.json`),
@@ -257,7 +258,7 @@ export class EnvironmentService {
 			await this.storeWorkflow(jsonParse<IWorkflowBase>(workflow), user);
 		});
 
-		let secrets;
+		let secrets: any;
 
 		if (process.env.DOPPLER_TOKEN)
 			secrets = await providers.doppler.fetch({ dopplerToken: process.env.DOPPLER_TOKEN });
@@ -266,8 +267,10 @@ export class EnvironmentService {
 
 		credentialFiles.forEach(async (file) => {
 			const rawCredential = await fsReadFile(file, 'utf8');
-			const { name, type, nodesAccess, data, id } = jsonParse<ICredentialsDb>(rawCredential);
-			const credential = new Credentials({ id, name }, type, nodesAccess, data);
+			const { name, type, nodesAccess, data, id } =
+				jsonParse<ICredentialsDecryptedDb>(rawCredential);
+
+			const credential = new Credentials({ id, name }, type, nodesAccess);
 
 			if (secrets && secrets[`N8N_${id}`]) {
 				credential.setData(jsonParse(secrets[`N8N_${id}`]), encryptionKey);
@@ -277,10 +280,7 @@ export class EnvironmentService {
 				if (existingCredential) return;
 				// Cred doesn't exist and is not sync with Doppler, create with blank values
 				if (data) {
-					credential.setData(
-						this.replaceCredentialData(data as ICredentialDataDecryptedObject),
-						encryptionKey,
-					);
+					credential.setData(this.replaceCredentialData(data), encryptionKey);
 				}
 			}
 
