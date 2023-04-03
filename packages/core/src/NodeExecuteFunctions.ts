@@ -578,7 +578,13 @@ function digestAuthAxiosConfig(
 	return axiosConfig;
 }
 
-async function proxyRequestToAxios(
+type ConfigObject = {
+	auth?: { sendImmediately: boolean };
+	resolveWithFullResponse?: boolean;
+	simple?: boolean;
+};
+
+export async function proxyRequestToAxios(
 	workflow: Workflow,
 	additionalData: IWorkflowExecuteAdditionalData,
 	node: INode,
@@ -595,12 +601,6 @@ async function proxyRequestToAxios(
 	let axiosConfig: AxiosRequestConfig = {
 		maxBodyLength: Infinity,
 		maxContentLength: Infinity,
-	};
-
-	type ConfigObject = {
-		auth?: { sendImmediately: boolean };
-		resolveWithFullResponse?: boolean;
-		simple?: boolean;
 	};
 	let configObject: ConfigObject;
 	if (uriOrObject !== undefined && typeof uriOrObject === 'string') {
@@ -660,7 +660,7 @@ async function proxyRequestToAxios(
 				headers: response.headers,
 				statusCode: response.status,
 				statusMessage: response.statusText,
-				request: response.request,
+				// request: response.request,
 			};
 		} else {
 			let body = response.data;
