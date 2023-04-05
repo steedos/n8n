@@ -1037,14 +1037,11 @@ async function prepareBinaryData(
 
 /**
  * Makes a request using OAuth data for authentication
- *
- * @param {(OptionsWithUri | requestPromise.RequestPromiseOptions)} requestOptions
- *
  */
 export async function requestOAuth2(
 	this: IAllExecuteFunctions,
 	credentialsType: string,
-	requestOptions: OptionsWithUri | requestPromise.RequestPromiseOptions | IHttpRequestOptions,
+	requestOptions: clientOAuth2.RequestObject,
 	node: INode,
 	additionalData: IWorkflowExecuteAdditionalData,
 	oAuth2Options?: IOAuth2Options,
@@ -1103,7 +1100,7 @@ export async function requestOAuth2(
 	);
 	// Signs the request by adding authorization headers or query parameters depending
 	// on the token-type used.
-	const newRequestOptions = token.sign(requestOptions as clientOAuth2.RequestObject);
+	const newRequestOptions = token.sign(requestOptions);
 	const newRequestHeaders = (newRequestOptions.headers = newRequestOptions.headers ?? {});
 	// If keep bearer is false remove the it from the authorization header
 	if (oAuth2Options?.keepBearer === false && typeof newRequestHeaders.Authorization === 'string') {
@@ -1164,7 +1161,7 @@ export async function requestOAuth2(
 					credentialsType,
 					credentials,
 				);
-				const refreshedRequestOption = newToken.sign(requestOptions as clientOAuth2.RequestObject);
+				const refreshedRequestOption = newToken.sign(requestOptions);
 
 				if (oAuth2Options?.keyToIncludeInAccessTokenHeader) {
 					Object.assign(newRequestHeaders, {
@@ -1241,7 +1238,7 @@ export async function requestOAuth2(
 			);
 
 			// Make the request again with the new token
-			const newRequestOptions = newToken.sign(requestOptions as clientOAuth2.RequestObject);
+			const newRequestOptions = newToken.sign(requestOptions);
 			newRequestOptions.headers = newRequestOptions.headers ?? {};
 
 			if (oAuth2Options?.keyToIncludeInAccessTokenHeader) {
@@ -1344,7 +1341,7 @@ export async function httpRequestWithAuthentication(
 			return await requestOAuth2.call(
 				this,
 				credentialsType,
-				requestOptions,
+				requestOptions as clientOAuth2.RequestObject,
 				node,
 				additionalData,
 				additionalCredentialOptions?.oauth2,
@@ -1539,7 +1536,7 @@ export async function requestWithAuthentication(
 			return await requestOAuth2.call(
 				this,
 				credentialsType,
-				requestOptions,
+				requestOptions as clientOAuth2.RequestObject,
 				node,
 				additionalData,
 				additionalCredentialOptions?.oauth2,
@@ -2056,7 +2053,7 @@ const getRequestHelperFunctions = (
 	async requestOAuth2(
 		this: IAllExecuteFunctions,
 		credentialsType: string,
-		requestOptions: OptionsWithUri | requestPromise.RequestPromiseOptions,
+		requestOptions: clientOAuth2.RequestObject,
 		oAuth2Options?: IOAuth2Options,
 	): Promise<any> {
 		return requestOAuth2.call(
