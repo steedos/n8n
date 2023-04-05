@@ -87,7 +87,7 @@ import get from 'lodash.get';
 import type { Request, Response } from 'express';
 import FormData from 'form-data';
 import path from 'path';
-import type { OptionsWithUri, OptionsWithUrl, RequestCallback, RequiredUriUrl } from 'request';
+import type { OptionsWithUri, OptionsWithUrl, RequiredUriUrl } from 'request';
 import type { RequestPromiseOptions } from 'request-promise-native';
 import requestPromise from 'request-promise-native';
 import FileType from 'file-type';
@@ -583,14 +583,12 @@ async function proxyRequestToAxios(
 	additionalData: IWorkflowExecuteAdditionalData,
 	node: INode,
 	uriOrObject: string | IDataObject,
-	options?: IDataObject,
 ): Promise<any> {
 	// Check if there's a better way of getting this config here
 	if (process.env.N8N_USE_DEPRECATED_REQUEST_LIB) {
 		return requestPromiseWithDefaults.call(
 			null,
 			uriOrObject as unknown as RequiredUriUrl & RequestPromiseOptions,
-			options as unknown as RequestCallback,
 		);
 	}
 
@@ -611,7 +609,7 @@ async function proxyRequestToAxios(
 	if (uriOrObject !== undefined && typeof uriOrObject === 'object') {
 		configObject = uriOrObject;
 	} else {
-		configObject = options || {};
+		configObject = {};
 	}
 
 	axiosConfig = Object.assign(axiosConfig, await parseRequestObject(configObject));
@@ -2028,8 +2026,7 @@ const getRequestHelperFunctions = (
 		);
 	},
 
-	request: async (uriOrObject, options) =>
-		proxyRequestToAxios(workflow, additionalData, node, uriOrObject, options),
+	request: async (uriOrObject) => proxyRequestToAxios(workflow, additionalData, node, uriOrObject),
 
 	async requestWithAuthentication(
 		this,
