@@ -826,6 +826,9 @@ importers:
       '@codemirror/lang-javascript':
         specifier: ^6.1.2
         version: 6.1.2
+      '@codemirror/lang-json':
+        specifier: ^6.0.1
+        version: 6.0.1
       '@codemirror/language':
         specifier: ^6.2.1
         version: 6.2.1
@@ -910,9 +913,6 @@ importers:
       luxon:
         specifier: ^3.3.0
         version: 3.3.0
-      monaco-editor:
-        specifier: ^0.33.0
-        version: 0.33.0
       n8n-design-system:
         specifier: workspace:*
         version: link:../design-system
@@ -1070,9 +1070,6 @@ importers:
       vite:
         specifier: 4.0.4
         version: 4.0.4(@types/node@16.18.12)(sass@1.55.0)(terser@5.16.1)
-      vite-plugin-monaco-editor:
-        specifier: ^1.0.10
-        version: 1.1.0(monaco-editor@0.33.0)
       vitest:
         specifier: ^0.28.5
         version: 0.28.5(sass@1.55.0)(terser@5.16.1)
@@ -3351,6 +3348,13 @@ packages:
       '@lezer/javascript': 1.0.2
     dev: false
 
+  /@codemirror/lang-json@6.0.1:
+    resolution: {integrity: sha512-+T1flHdgpqDDlJZ2Lkil/rLiRy684WMLc74xUnjJH48GQdfJo/pudlTRreZmKwzP8/tGdKf83wlbAdOCzlJOGQ==}
+    dependencies:
+      '@codemirror/language': 6.2.1
+      '@lezer/json': 1.0.0
+    dev: false
+
   /@codemirror/language@6.2.1:
     resolution: {integrity: sha512-MC3svxuvIj0MRpFlGHxLS6vPyIdbTr2KKPEW46kCoCXw2ktb4NTkpkPBI/lSP/FoNXLCBJ0mrnUi1OoZxtpW1Q==}
     dependencies:
@@ -4189,6 +4193,13 @@ packages:
 
   /@lezer/javascript@1.0.2:
     resolution: {integrity: sha512-IjOVeIRhM8IuafWNnk+UzRz7p4/JSOKBNINLYLsdSGuJS9Ju7vFdc82AlTt0jgtV5D8eBZf4g0vK4d3ttBNz7A==}
+    dependencies:
+      '@lezer/highlight': 1.1.1
+      '@lezer/lr': 1.2.3
+    dev: false
+
+  /@lezer/json@1.0.0:
+    resolution: {integrity: sha512-zbAuUY09RBzCoCA3lJ1+ypKw5WSNvLqGMtasdW6HvVOqZoCpPr8eWrsGnOVWGKGn8Rh21FnrKRVlJXrGAVUqRw==}
     dependencies:
       '@lezer/highlight': 1.1.1
       '@lezer/lr': 1.2.3
@@ -15944,9 +15955,6 @@ packages:
   /moment@2.29.4:
     resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
 
-  /monaco-editor@0.33.0:
-    resolution: {integrity: sha512-VcRWPSLIUEgQJQIE0pVT8FcGBIgFoxz7jtqctE+IiCxWugD0DwgyQBcZBhdSrdMC84eumoqMZsGl2GTreOzwqw==}
-
   /mongodb-connection-string-url@2.5.4:
     resolution: {integrity: sha512-SeAxuWs0ez3iI3vvmLk/j2y+zHwigTDKQhtdxTgt5ZCOQQS5+HW4g45/Xw5vzzbn7oQXCNQ24Z40AkJsizEy7w==}
     dependencies:
@@ -21267,14 +21275,6 @@ packages:
       - sugarss
       - supports-color
       - terser
-    dev: true
-
-  /vite-plugin-monaco-editor@1.1.0(monaco-editor@0.33.0):
-    resolution: {integrity: sha512-IvtUqZotrRoVqwT0PBBDIZPNraya3BxN/bfcNfnxZ5rkJiGcNtO5eAOWWSgT7zullIAEqQwxMU83yL9J5k7gww==}
-    peerDependencies:
-      monaco-editor: '>=0.33.0'
-    dependencies:
-      monaco-editor: 0.33.0
     dev: true
 
   /vite@4.0.4(@types/node@16.18.12)(sass@1.55.0)(terser@5.16.1):
