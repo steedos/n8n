@@ -558,6 +558,28 @@ export const routes = [
 				},
 			},
 			{
+				path: 'version-control',
+				name: VIEWS.VERSION_CONTROL,
+				components: {
+					settingsView: SettingsVersionControl,
+				},
+				meta: {
+					telemetry: {
+						pageCategory: 'settings',
+						getProperties(route: Route) {
+							return {
+								feature: 'vc',
+							};
+						},
+					},
+					permissions: {
+						allow: {
+							loginStatus: [LOGIN_STATUS.LoggedIn],
+						},
+					},
+				},
+			},
+			{
 				path: 'sso',
 				name: VIEWS.SSO_SETTINGS,
 				components: {
@@ -691,28 +713,6 @@ export const routes = [
 							settingsStore.isDesktopDeployment
 						);
 					},
-				},
-			},
-		},
-	},
-	{
-		path: 'version-control',
-		name: VIEWS.VERSION_CONTROL,
-		components: {
-			settingsView: SettingsVersionControl,
-		},
-		meta: {
-			telemetry: {
-				pageCategory: 'settings',
-				getProperties(route: Route) {
-					return {
-						feature: 'vc',
-					};
-				},
-			},
-			permissions: {
-				allow: {
-					loginStatus: [LOGIN_STATUS.LoggedIn],
 				},
 			},
 		},
